@@ -84,7 +84,7 @@ public class PlayerController : MonoBehaviour
         for (int i = 1; i <= 100; i++)
         {
             m_Player.position = Vector3.Lerp(source, target, i / 100f);
-            yield return new WaitForSeconds(1f / m_MoveTime);
+            yield return new WaitForSeconds(0.01f);
         }
     }
 }
