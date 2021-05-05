@@ -6,13 +6,18 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] Transform m_Player;
     [SerializeField] float m_Speed = 100f;
-    [SerializeField] float m_DelayTime = 0.8f;
+    [SerializeField] float m_DelayTime = 0.5f;
 
     readonly List<Vector3> m_Buffer = new List<Vector3>();
     bool m_IsRunning = false;
 
     public void OnKeyboardEvent(KeyboardEvent t)
     {
+        if (m_IsRunning)
+        {
+            return;
+        }
+
         switch (t)
         {
             case KeyboardEvent.Start:
@@ -43,10 +48,9 @@ public class PlayerController : MonoBehaviour
             yield break;
         }
 
-        // Avoid interference with event listener.
-        yield return new WaitForEndOfFrame();
-
+        // Activate flag.
         m_IsRunning = true;
+
         foreach (var displacement in m_Buffer)
         {
             var from = m_Player.position;
@@ -55,7 +59,10 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(m_DelayTime);
         }
 
+        // Reset buffer.
         m_Buffer.Clear();
+
+        // Disable flag.
         m_IsRunning = false;
     }
 
