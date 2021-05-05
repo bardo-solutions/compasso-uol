@@ -11,3 +11,7 @@ Permite fazer a animação de movimento do cubo, em um processo de animação ot
 
 ## Player Controller
 Integra todos os scripts anteriores para fazer a solução desejada funcionar.
+
+### Desenvolvedores:
+- Daniel Piassi: `dandampi@gmail.com`
+- Vitor Haueisen: `vitorhaueisen@gmail.com`
