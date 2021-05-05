@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
             var to = from + displacement;
 
             // Wait for coroutine finishes before continue.
-            yield return StartCoroutine(LerpMove(from, to));
+            yield return StartCoroutine(Tween.LerpMove(m_Player, from, to, m_MoveTime));
 
             // Wait a little between each iteration.
             yield return new WaitForSeconds(m_DelayTime);
@@ -76,15 +76,5 @@ public class PlayerController : MonoBehaviour
 
         // Disable flag.
         m_IsRunning = false;
-    }
-
-    // TODO turn it into a custom Tweening library.
-    IEnumerator LerpMove(Vector3 source, Vector3 target)
-    {
-        for (int i = 1; i <= 100; i++)
-        {
-            m_Player.position = Vector3.Lerp(source, target, i / 100f);
-            yield return new WaitForSeconds(0.01f);
-        }
     }
 }
