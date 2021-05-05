@@ -4,74 +4,67 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    private int[] m_gridSize = new int[2];
-    [SerializeField]
-    private int m_step;
-    [SerializeField]
-    private float m_speed;
-    private Vector2 m_onGridPosition;
-    [SerializeField]
-    private Transform m_player;
-    private bool m_enabled = false;
+    [SerializeField] Transform m_Player;
+    [SerializeField] float m_Speed = 100f;
+    [SerializeField] float m_DelayTime = 0.8f;
 
+    readonly List<Vector3> m_Buffer = new List<Vector3>();
+    bool m_IsRunning = false;
 
-    void OnEnable()
+    public void OnKeyboardEvent(KeyboardEvent t)
     {
-        EventListener.OnKeyboardEvent.AddListener(OnKeyboardEvent);
-        m_onGridPosition = new Vector2((m_gridSize[0] - 1 / 2f), (m_gridSize[1] - 1) / 2f);
-    }
-
-    void OnDisable()
-    {
-        EventListener.OnKeyboardEvent.RemoveListener(OnKeyboardEvent);
-    }
-
-    void OnKeyboardEvent(KeyboardEvent t)
-    {
-        if (t == KeyboardEvent.Start)
-            m_enabled = true;
-
-        if (!m_enabled)
-            return;
-
         switch (t)
         {
+            case KeyboardEvent.Start:
+                StartCoroutine(Run());
+                break;
             case KeyboardEvent.Up:
-                Move(Vector2.up);
+                m_Buffer.Add(Vector3.forward);
                 break;
             case KeyboardEvent.Down:
-                Move(Vector2.down);
+                m_Buffer.Add(Vector3.back);
                 break;
             case KeyboardEvent.Left:
-                Move(Vector2.left);
+                m_Buffer.Add(Vector3.left);
                 break;
             case KeyboardEvent.Right:
-                Move(Vector2.right);
+                m_Buffer.Add(Vector3.right);
                 break;
             default:
-                return;
+                break;
         }
     }
 
-    void Move(Vector2 dir)
+
+    IEnumerator Run()
     {
-        Vector3 currentPos = m_player.position;
-        Vector3 targetPos = new Vector3(
-            Mathf.Clamp(m_onGridPosition.x + dir.x, 0, m_gridSize[0]) * m_step,
-            m_player.position.y,
-            Mathf.Clamp(m_onGridPosition.y + dir.y, 0, m_gridSize[1]) * m_step
-        );
-        StopAllCoroutines();
-        StartCoroutine(LerpMove(currentPos, targetPos));
+        if (m_IsRunning)
+        {
+            yield break;
+        }
+
+        // Avoid interference with event listener.
+        yield return new WaitForEndOfFrame();
+
+        m_IsRunning = true;
+        foreach (var displacement in m_Buffer)
+        {
+            var from = m_Player.position;
+            var to = from + displacement;
+            yield return StartCoroutine(LerpMove(from, to));
+            yield return new WaitForSeconds(m_DelayTime);
+        }
+
+        m_Buffer.Clear();
+        m_IsRunning = false;
     }
 
     IEnumerator LerpMove(Vector3 source, Vector3 target)
     {
         for (int i = 1; i <= 100; i++)
         {
-            m_player.position = Vector3.Lerp(source, target, i / 100f);
-            yield return new WaitForSeconds(1f / m_speed);
+            m_Player.position = Vector3.Lerp(source, target, i / 100f);
+            yield return new WaitForSeconds(1f / m_Speed);
         }
     }
 }

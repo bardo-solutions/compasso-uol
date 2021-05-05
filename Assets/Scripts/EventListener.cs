@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 public class EventListener : MonoBehaviour
 {
-    public static UnityEvent<KeyboardEvent> OnKeyboardEvent = new UnityEvent<KeyboardEvent>();
+    public UnityEvent<KeyboardEvent> OnKeyboardEvent = new UnityEvent<KeyboardEvent>();
 
     private void Update()
     {
