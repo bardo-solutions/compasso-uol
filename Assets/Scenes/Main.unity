@@ -217,7 +217,7 @@ GameObject:
   - component: {fileID: 651722662}
   - component: {fileID: 651722663}
   m_Layer: 0
-  m_Name: Controllers
+  m_Name: Player Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Player: {fileID: 914558480}
-  m_Speed: 400
+  m_MoveTime: 1
   m_DelayTime: 0.5
 --- !u!1 &914558476
 GameObject:
@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 945437049}
   - component: {fileID: 945437048}
   m_Layer: 0
-  m_Name: Keyboard Listener
+  m_Name: Input Listener
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
