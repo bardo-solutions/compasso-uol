@@ -12,10 +12,18 @@ public class PlayerController : MonoBehaviour
 
     [Tooltip("Delay time between each step in seconds.")]
     [SerializeField] float m_DelayTime = 0.5f;
+    [Tooltip("Player area size, in units.")]
+    [SerializeField] int m_AreaSize = 4;
+    private Vector2[] m_Bounds = new Vector2[2];
 
     // Auxiliar members.
     readonly List<Vector3> m_DisplacementBuffer = new List<Vector3>();
     bool m_IsRunning = false;
+    private void Awake()
+    {
+        m_Bounds[0] = new Vector2(m_Player.position.x - m_AreaSize / 2f, m_Player.position.z - m_AreaSize / 2f);
+        m_Bounds[1] = new Vector2(m_Player.position.z + m_AreaSize / 2f, m_Player.position.z + m_AreaSize / 2f);
+    }
 
     public void OnKeyboardEvent(KeyboardEvent t)
     {
@@ -61,20 +69,32 @@ public class PlayerController : MonoBehaviour
         foreach (var displacement in m_DisplacementBuffer)
         {
             // Iterate over displacement buffer.
-            var from = m_Player.position;
-            var to = from + displacement;
+            Vector3 from = m_Player.position;
+            Vector3 to;
 
-            // Wait for coroutine finishes before continue.
-            yield return StartCoroutine(Tween.LerpMove(m_Player, from, to, m_MoveTime));
+            if (ClampPlayerBounds(from + displacement, out to))
+            {
+                // Wait for coroutine finishes before continue.
+                yield return StartCoroutine(Tween.LerpMove(m_Player, m_Player.position, to, m_MoveTime));
 
-            // Wait a little between each iteration.
-            yield return new WaitForSeconds(m_DelayTime);
+                // Wait a little between each iteration.
+                yield return new WaitForSeconds(m_DelayTime);
+            }
         }
 
         // Reset buffer.
         m_DisplacementBuffer.Clear();
-
         // Disable flag.
         m_IsRunning = false;
+    }
+
+    bool ClampPlayerBounds(Vector3 value, out Vector3 target)
+    {
+        target = new Vector3(
+            Mathf.Clamp(value.x, m_Bounds[0].x, m_Bounds[1].x),
+            value.y,
+            Mathf.Clamp(value.z, m_Bounds[0].y, m_Bounds[1].y)
+        );
+        return target == value;
     }
 }

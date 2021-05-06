@@ -8,7 +8,7 @@ public static class Tween
     {
         float startTime = Time.time;
         float t = 0f;
-        while (t < 1f)
+        while (t <= 1f)
         {
             t = (Time.time - startTime) / duration;
             transform.position = Vector3.Lerp(source, target, t);
