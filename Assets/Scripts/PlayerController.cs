@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
         switch (t)
         {
-            case KeyboardEvent.Start:
+            case KeyboardEvent.Run:
                 StartCoroutine(Run());
                 break;
             case KeyboardEvent.Up:
@@ -70,12 +70,11 @@ public class PlayerController : MonoBehaviour
         {
             // Iterate over displacement buffer.
             Vector3 from = m_Player.position;
-            Vector3 to;
 
-            if (ClampPlayerBounds(from + displacement, out to))
+            if (ValidMove(from + displacement, out Vector3 to))
             {
                 // Wait for coroutine finishes before continue.
-                yield return StartCoroutine(Tween.LerpMove(m_Player, m_Player.position, to, m_MoveTime));
+                yield return StartCoroutine(Tween.LerpMove(m_Player, from, to, m_MoveTime));
 
                 // Wait a little between each iteration.
                 yield return new WaitForSeconds(m_DelayTime);
@@ -88,13 +87,13 @@ public class PlayerController : MonoBehaviour
         m_IsRunning = false;
     }
 
-    bool ClampPlayerBounds(Vector3 value, out Vector3 target)
+    private bool ValidMove(Vector3 desired, out Vector3 target)
     {
         target = new Vector3(
-            Mathf.Clamp(value.x, m_Bounds[0].x, m_Bounds[1].x),
-            value.y,
-            Mathf.Clamp(value.z, m_Bounds[0].y, m_Bounds[1].y)
+            Mathf.Clamp(desired.x, m_Bounds[0].x, m_Bounds[1].x),
+            desired.y,
+            Mathf.Clamp(desired.z, m_Bounds[0].y, m_Bounds[1].y)
         );
-        return target == value;
+        return target == desired;
     }
 }

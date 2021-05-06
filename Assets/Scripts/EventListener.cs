@@ -30,7 +30,7 @@ public class EventListener : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Space))
         {
             // start
-            OnKeyboardEvent.Invoke(KeyboardEvent.Start);
+            OnKeyboardEvent.Invoke(KeyboardEvent.Run);
         }
     }
 }
